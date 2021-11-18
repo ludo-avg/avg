@@ -1,176 +1,187 @@
-﻿using System;
+﻿//C#
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+//Unity
 using UnityEngine;
+using UnityEngine.EventSystems;
+//Plugins
 using DG.Tweening;
 using TMPro;
+//Project
 using Interactions;
+using Modules;
 
 public class InteractionManager : MonoBehaviour
 {
-    #region Field
-    //Static
+    #region Singleton
     public static InteractionManager singleton = null;
-
-    //setting
-    [SerializeField] TMP_Text nameTmpro = null;
-    [SerializeField] SpriteRenderer backGround = null;
-    [SerializeField] SpriteRenderer newBackGround = null;
-
-    //runtime
-    List<object> list;
-    [NonSerialized]public object current;
-    [NonSerialized] public int currentNum;
-    bool backgroundFinish;
-    bool newBackgroundFinish;
-    #endregion
-
-
-    #region Public Method
-
-    public bool Next()
-    {
-        if (currentNum < list.Count - 1)
-        {
-            currentNum++;
-            current = list[currentNum];
-            ShowCurrent();
-            return true;
-        }
-        return false;
-    }
-
-    #endregion
-
     private void Awake()
     {
         singleton = this;
     }
+    #endregion 
+
+    //runtime
+    List<InteractionBase> list;
+    [NonSerialized] public InteractionBase current = null;
 
     private void Start()
     {
-        list = InteractionList.singleton.list;
+        Tools.NoName.SetAllChildrenInactive(InteractionList.singleton.transform);
+        Tools.NoName.SetAllChildrenInactive(InteractionData.singleton.transform);
 
-        currentNum = 0;
-        if (list.Count > currentNum)
+        list = new List<InteractionBase>();
+        foreach (Transform child in InteractionList.singleton.transform)
         {
-            current = list[currentNum];
+            list.Add(child.GetComponent<InteractionBase>());
         }
-        ShowCurrent();
+        list = list.OrderBy(o => o.transform.GetSiblingIndex()).ToList();
+
+
+        StartCoroutine(LateStart());
     }
 
-    private void ShowCurrent()
+
+    /// <summary>
+    /// 需要等待其他组件就位，再Start，所以晚一帧开始。
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator LateStart()
     {
-        var writer = DialogueTypeWriter.singleton;
-        if (current is Idle)
+        yield return null;
+        if (list.Count > 0)
         {
-            var idle = current as Idle;
-            idle.InteractionStart();
-            DialogueBoxShowOrNot(false);
+            current = list[0];
         }
-        else if (current is Dialogue)
+        else
         {
-            var dialogue = current as Dialogue;
-            DialogueBoxShowOrNot(true);
-            writer.OutputText(dialogue.text);
-            if (dialogue.characterName != null)
+            Debug.LogWarning("Interaction List empty.");
+        }
+        current.AStart();
+    }
+
+    private void Update()
+    {
+        if (current == null) return;
+        /*
+            先Interact
+            然后Update
+            最后判End
+        */
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            current.AInteract();
+        }
+        
+        current.AUpdate();
+        if (current.ended == true)
+        {
+            var oldCurrent = current;
+            current = GetCurrentNext();
+
+            if (current == null)
             {
-                nameTmpro.text = dialogue.characterName;
+                current = oldCurrent;
+                Debug.LogWarning("Trying to find current+1， but current is already end.");
             }
             else
             {
-                nameTmpro.text = "";
-            }
+                current.AStart();
+                //
+                //print($"next is {current.name}, index: {current.transform.GetSiblingIndex()}");
 
+            }
         }
-        else if (current is Character)
-        {
-            var character = current as Character;
-            if (character.show == true)
-            {
-                character.character.SetActive(true);
-                SpriteRenderer sr = character.character.GetComponent<SpriteRenderer>();
-                sr.color = new Color(1, 1, 1, 0);
-                sr.DOColor(new Color(1, 1, 1, 1), 0.5f);
-            }
-            else
-            {
-                character.character.SetActive(false);
-            }
-            Next();
+    }
 
+    /// <summary>
+    /// return null, if invalid current
+    /// </summary>
+    /// <returns></returns>
+    private InteractionBase GetCurrentNext()
+    {
+        bool somethingIsNull = false;
+        InteractionBase nextFound = null;
+
+        var currentGotos = current.@goto;
+        
+
+        if (currentGotos.Length == 0)
+        {
+            somethingIsNull = true;
         }
-        else if (current is ChangeBackGround)
+        else
         {
-            var cbg = current as ChangeBackGround;
-            newBackGround.sprite = cbg.newBackGround;
-
-            DialogueBoxShowOrNot(false);
-            ;
-            newBackGround.gameObject.SetActive(true);
-            backgroundFinish = false;
-            newBackgroundFinish = false;
-            var color0 = new Color(1, 1, 1, 0);
-            var color1 = new Color(1, 1, 1, 1);
-            backGround.DOColor(color0, 0.8f).OnKill(() =>backgroundFinish = true);
-            newBackGround.color = color1; //newBackGround.color = color0;
-            newBackGround.DOColor(color1, 0.8f).OnKill(() => newBackgroundFinish = true);
-            StartCoroutine(ChangeBackgroundFinish());
-            ;
-            IEnumerator ChangeBackgroundFinish()
+            bool found = false;
+            foreach( var oneGoto in currentGotos)
             {
-                while (!backgroundFinish || !newBackgroundFinish)
+                var condition = oneGoto.condition;
+
+                bool conditionTrue = false;
+                if (oneGoto.condition == null)
                 {
-                    yield return null;
+                    conditionTrue = true;
                 }
-                backGround.sprite = newBackGround.sprite;
-                backGround.color = new Color(1, 1, 1, 1);
-                newBackGround.gameObject.SetActive(false);
-                Next();
+                else
+                {
+                    if (condition.GetPersistentEventCount() == 0)
+                    {
+                        conditionTrue = true;
+                    }
+                    else
+                    {
+                        condition.Invoke();
+                        string conditionMethod = condition.GetPersistentMethodName(0);
+                        string valueName = conditionMethod + "_R";
+                        bool conditionValue = false;
+
+                        Type myType = UserData.singleton.GetType();
+                        FieldInfo myFieldInfo = myType.GetField(valueName,
+                            BindingFlags.Public | BindingFlags.Instance);
+                        conditionValue = (bool)myFieldInfo.GetValue(UserData.singleton);
+
+                        if (conditionValue)
+                        {
+                            conditionTrue = true;
+                        }
+                    }
+                }
+
+                if (conditionTrue)
+                {
+                    nextFound = oneGoto.interaction;
+                }
+
+                if (conditionTrue)
+                {
+                    found = true;
+                    break;
+                }
             }
-
-        }
-        else if (current is TimeChoice)
-        {
-            var tc = current as TimeChoice;
-            DialogueBoxShowOrNot(true);
-            tc.InteractionStart();
-        }
-        else if (current is Choice)
-        {
-            var choice = current as Choice;
-            DialogueBoxShowOrNot(true);
-            choice.InteractionStart();
-        }
-        else if (current is CustomInteraction)
-        {
-            var custom = current as CustomInteraction;
-            custom.InteractionStart();
-        }
-        else if (current is GameEnd)
-        {
-            backGround.gameObject.SetActive(false);
-            nameTmpro.text = "";
-            DialogueBoxShowOrNot(true);
-            writer.OutputText("游戏结束");
-        }
-    }
-
-    public void DialogueBoxShowOrNot(bool show)
-    {
-        if (show)
-        {
-            if (DialogueBox.singleton.gameObject.activeSelf == false)
+            if (!found)
             {
-                DialogueBox.singleton.gameObject.SetActive(true);
+                somethingIsNull = true;
+            }
+        }
+
+        if (somethingIsNull || (!somethingIsNull && nextFound == null))
+        {
+            int next = current.transform.GetSiblingIndex() + 1;
+            if (next < list.Count)
+            {
+                return list[next];
+            }
+            else
+            {
+                return null;
             }
         }
         else
         {
-            if (DialogueBox.singleton.gameObject.activeSelf == true)
-            {
-                DialogueBox.singleton.gameObject.SetActive(false);
-            }
+            return nextFound;   
         }
     }
 }

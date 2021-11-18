@@ -2,22 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using TMPro;
 using NaughtyAttributes;
+using Modules;
 
 namespace Interactions
 {
-    public class Choice : MonoBehaviour
+    public class Choice : InteractionBase
     {
         #region Type
-        class Button //TimeChoiceButton
+        protected enum LR
+        {
+            Left,
+            Right
+        }
+
+        protected class Button
         {
             public GameObject button;
             public GameObject ImageUp;
             public GameObject ImageDown;
         }
 
-        enum EndState
+        protected enum EndState
         {
             Left,
             Right,
@@ -26,31 +34,29 @@ namespace Interactions
         #endregion
 
         //setting
-        string text = "阿雯选择了：";
-        /*
-        string textChoiceLeft1 = "我正好有10块钱，就选这个吧。";
-        string textChoiceLeft2 = "此时旁边跳出来一个身影，正是阿雯学校的教导主任。";
-        string textChoiceLeft3 = "我就知道开家长会一定会有人来租爹，给我压回学校。";
-        string textChoiceLeft4 = "阿雯就这样结束了愉快的暑假。";
-        string textRight1 = "阿雯看到500的牌子脑袋有点转不过弯，没想明白为啥要选500的，说话都开始磕巴了。";
-        string textRight2 = "5。。。5。。。";
-        string textRight3 = "5块钱成交！";
-        */
+        public string text;
+        public UnityEvent initCall = null;
+        public UnityEvent leftCall = null;
+        public UnityEvent rightCall = null;
 
         //cached
-        Dictionary<string, Button> buttons;
+        protected Dictionary<LR, Button> buttons;
         //runtime
-        //
-        [NonSerialized] public bool ended = false;
-        //
-        string downHit;
+        GameObject downHit;
 
-
-        //=================================================================================================
-        public void InteractionStart()
+        public virtual void DataInit(string text, UnityEvent leftCall = null, UnityEvent rightCall = null)
         {
+            this.text = text;
+            this.leftCall = leftCall;
+            this.rightCall = rightCall;
+        }
+
+        public override void AStart()
+        {
+            base.AStart();
+
             //1
-            buttons = new Dictionary<string, Button>();
+            buttons = new Dictionary<LR, Button>();
             Button left = new Button();
             left.button = transform.Find("Left").gameObject;
             left.ImageDown = left.button.transform.Find("ImageDown").gameObject;
@@ -59,59 +65,136 @@ namespace Interactions
             right.button = transform.Find("Right").gameObject;
             right.ImageDown = right.button.transform.Find("ImageDown").gameObject;
             right.ImageUp = right.button.transform.Find("ImageUp").gameObject;
-
-            buttons.Add("Left", left);
-            buttons.Add("Right", right);
+            ;
+            buttons.Add(LR.Left, left);
+            buttons.Add(LR.Right, right);
 
             //2
-            ended = false;
             downHit = null;
 
             //3
             gameObject.SetActive(true);
 
             //4
+            DialogueBox.singleton.Show(true);
             DialogueTypeWriter.singleton.OutputText(text);
+
+            //5
+            if (initCall != null)
+            {
+                initCall.Invoke();
+            }
         }
 
-        void InteractionEnd()
+        public override void AEnd()
         {
+            #region SubFunction
+            bool IsLeftDown()
+            {
+                return buttons[LR.Left].ImageDown.activeSelf;
+            }
+
+            bool IsRightDown()
+            {
+                return buttons[LR.Right].ImageDown.activeSelf;
+            }
+            #endregion
+
+            base.AEnd();
+
             gameObject.SetActive(false);
-            ended = true;
-
-            //------------------
-
+            
             EndState endState = EndState.OutOfTime;
-            bool leftDown = GetLeftDown();
-            bool rightDown = GetRightDown();
-            if (leftDown && rightDown)
             {
-                Debug.LogError("left and right both down!");
+                bool leftDown = IsLeftDown();
+                bool rightDown = IsRightDown();
+                if (leftDown && rightDown)
+                {
+                    Debug.LogError("left and right both down!");
+                }
+                if (leftDown && !rightDown)
+                {
+                    endState = EndState.Left;
+                }
+                else if (!leftDown && rightDown)
+                {
+                    endState = EndState.Right;
+                }
             }
-            if (leftDown && !rightDown)
-            {
-                endState = EndState.Left;
-            }
-            else if (!leftDown && rightDown)
-            {
-                endState = EndState.Right;
-            }
-
+            
             if (endState == EndState.Left)
             {
-                //
+                if (leftCall != null) leftCall.Invoke();
             }
             else if (endState == EndState.Right)
             {
-                //
+                if (rightCall != null) rightCall.Invoke();
             }
         }
 
-        public void InteractionInteract()
+        public override void AInteract()
         {
+            /*  ◑ 音效
+                ✓ down up，各种处理
+                ✓ 需要响应普通点击
+                ✓ 进入时，可能鼠标已经在down状态
+            */
+
+
+            #region SubFunction
+            LR? MouseHitToLR(GameObject hit)
+            {
+                if (hit.name == "Left")
+                    return LR.Left;
+                if (hit.name == "Right")
+                    return LR.Right;
+                return null;
+            }
+
+            void SetButtonRepresentOneButtonDown(GameObject hit)
+            {
+                LR? hitLR = MouseHitToLR(hit);
+                if (hitLR.HasValue)
+                {
+                    LR lr = hitLR.Value;
+                    buttons[lr].ImageDown.SetActive(true);
+                    buttons[lr].ImageUp.SetActive(false);
+
+                    LR theOther = (lr == LR.Left) ? LR.Right : LR.Left;
+                    buttons[theOther].ImageDown.SetActive(false);
+                    buttons[theOther].ImageUp.SetActive(true);
+                }
+            }
+
+            void SetButtonRepresentAllButtonUp()
+            {
+                buttons[LR.Left].ImageDown.SetActive(false);
+                buttons[LR.Left].ImageUp.SetActive(true);
+                buttons[LR.Right].ImageDown.SetActive(false);
+                buttons[LR.Right].ImageUp.SetActive(true);
+            }
+            #endregion
+
+            //1. 每一帧都执行
+            {
+                GameObject currentHit = null;
+                if (Input.GetMouseButton(0))
+                {
+                    currentHit = Tools.NoName.GetMouseHit();
+                }
+
+                if (currentHit != null && currentHit == downHit)
+                {
+                    SetButtonRepresentOneButtonDown(currentHit);
+                }
+                else SetButtonRepresentAllButtonUp();
+            }
+            
+
+            //2. 有Down、Up事件时的相应
             if (Input.GetMouseButtonDown(0))
             {
-                downHit = GetMouseHit();
+                downHit = Tools.NoName.GetMouseHit();
 
                 if (DialogueTypeWriter.singleton.state == DialogueTypeWriter.TypewriterState.Interrupted
                     && downHit == null)
@@ -122,74 +205,15 @@ namespace Interactions
 
             if (Input.GetMouseButtonUp(0))
             {
-                string upHit = GetMouseHit();
+                GameObject upHit = Tools.NoName.GetMouseHit();
                 if (upHit != null && upHit == downHit)
                 {
-                    OneButtonDown(upHit);
-                    InteractionEnd();
+                    SetButtonRepresentOneButtonDown(upHit);
                 }
-                else AllButtonUp();
+                else SetButtonRepresentAllButtonUp();
+
+                if (upHit != null && upHit == downHit) AEnd();
             }
-
-            if (Input.GetMouseButton(0))
-            {
-                string currentHit = GetMouseHit();
-                if (currentHit != null && currentHit == downHit)
-                {
-                    OneButtonDown(currentHit);
-                }
-                else AllButtonUp();
-            }
-            else AllButtonUp();
-        }
-
-        private string GetMouseHit()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.transform != null)
-                {
-                    GameObject hitObject = hit.transform.gameObject;
-                    return hitObject.name;
-                }
-                else
-                    return null;
-            }
-            return null;
-        }
-
-        private void OneButtonDown(string hit)
-        {
-            if (hit == "Left" || hit == "Right")
-            {
-                buttons[hit].ImageDown.SetActive(true);
-                buttons[hit].ImageUp.SetActive(false);
-
-                string theOther = (hit == "Left") ? "Right" : "Left";
-                buttons[theOther].ImageDown.SetActive(false);
-                buttons[theOther].ImageUp.SetActive(true);
-            }
-        }
-
-        private void AllButtonUp()
-        {
-            buttons["Left"].ImageDown.SetActive(false);
-            buttons["Left"].ImageUp.SetActive(true);
-            buttons["Right"].ImageDown.SetActive(false);
-            buttons["Right"].ImageUp.SetActive(true);
-        }
-
-        private bool GetLeftDown()
-        {
-            return buttons["Left"].ImageDown.activeSelf;
-        }
-
-        private bool GetRightDown()
-        {
-            return buttons["Right"].ImageDown.activeSelf;
         }
     }
 }

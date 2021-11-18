@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7380221768047173204
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7380221768047173205}
+  - component: {fileID: 7380221768047173202}
+  m_Layer: 0
+  m_Name: InteractionCreator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7380221768047173205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7380221768047173204}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.1446822, y: -1.67367, z: -0.6488923}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7380221768047173202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7380221768047173204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dfc6db7b7379fc49bd2f5d36947e21a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 3812415353566142086, guid: 5cea0fadf2aec1c4d8efc40aef3c7f0b, type: 3}
+  gameEnd: {fileID: 6089782626535834914, guid: 52c9733db7f9f9c48af0285f8411a786, type: 3}
+  dialogue: {fileID: 3404918528824815819, guid: 6a53bae50b3fc324fa100e9ad20566c8,
+    type: 3}
+  character: {fileID: 6713664670571020651, guid: 607d439658199674cb7d48bd7771c009,
+    type: 3}
+  changeBackground: {fileID: 7705953057775875968, guid: 43251bf12518cf8489520971cfed83cf,
+    type: 3}
+  choice: {fileID: 938430016858241422, guid: b7bcd8b119937c0428489bbc1b74d040, type: 3}
+  timeChoice: {fileID: 7359838160904811958, guid: 378f3b29d1d96444fb99f6b2a9506a59,
+    type: 3}
+  customInteraction: {fileID: 5527429033460755908, guid: fa1ed181b4405f7419209f020f9e51b7,
+    type: 3}
+  function: {fileID: 7355330503479741923, guid: 71346f97979515f4ca09ee2f288070cc,
+    type: 3}
