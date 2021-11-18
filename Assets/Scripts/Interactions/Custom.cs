@@ -76,7 +76,7 @@ namespace Interactions
                 if (s != null) s.gameObject.SetActive(false);
 
             }
-            Inventory.ScrollViewManager.singleton.transform.parent.parent.gameObject.SetActive(fals);
+            Inventory.ScrollViewManager.singleton.transform.parent.parent.gameObject.SetActive(false);
 
             timeObject.SetActive(false);
             if (timeCoroutine != null)
