@@ -10,6 +10,9 @@ namespace Interactions.CustomSubs
         public GameObject influenceBy = null;
 
         //持久化数据的数值化
+        /// <summary>
+        /// 在 CustomInteractionPersistValueManager 中被调用。
+        /// </summary>
         public virtual void DataInit()
         {
 

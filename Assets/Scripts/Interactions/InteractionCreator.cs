@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+#if UNITY_EDITOR
 namespace Interactions
 {
     [ExecuteInEditMode]
@@ -82,11 +84,41 @@ namespace Interactions
 
         public class Dialogue
         {
-            public static GameObject Create(string text, string name = null)
+            public static GameObject Create(string text)
+            {
+                GameObject obj = Instantiate(dialogue_s);
+                Interactions.Dialogue result = obj.GetComponent<Interactions.Dialogue>();
+                result.DataInit(text);
+
+                obj.SetActive(false);
+                return obj;
+            }
+
+            public static GameObject Create(string text, string name)
             {
                 GameObject obj = Instantiate(dialogue_s);
                 Interactions.Dialogue result = obj.GetComponent<Interactions.Dialogue>();
                 result.DataInit(text, name);
+
+                obj.SetActive(false);
+                return obj;
+            }
+
+            public static GameObject Create(string text, string name = null, AudioClip audioClip = null)
+            {
+                GameObject obj = Instantiate(dialogue_s);
+                Interactions.Dialogue result = obj.GetComponent<Interactions.Dialogue>();
+                result.DataInit(text, name, audioClip);
+
+                obj.SetActive(false);
+                return obj;
+            }
+
+            public static GameObject Create(string text, string name = null, string audioClipFileName = null)
+            {
+                GameObject obj = Instantiate(dialogue_s);
+                Interactions.Dialogue result = obj.GetComponent<Interactions.Dialogue>();
+                result.DataInit(text, name, audioClipFileName);
 
                 obj.SetActive(false);
                 return obj;
@@ -108,11 +140,11 @@ namespace Interactions
 
         public class ChangeBackground
         {
-            public static GameObject Create(GameObject background)
+            public static GameObject Create(GameObject background, Interactions.ChangeBackground.InType inType = Interactions.ChangeBackground.InType.AutoDecide, bool instantChange = false)
             {
                 GameObject obj = Instantiate(changeBackground_s);
                 Interactions.ChangeBackground result = obj.GetComponent<Interactions.ChangeBackground>();
-                result.DataInit(background);
+                result.DataInit(background, inType, instantChange);
 
                 obj.SetActive(false);
                 return obj;
@@ -197,3 +229,4 @@ namespace Interactions
 
     }
 }
+#endif

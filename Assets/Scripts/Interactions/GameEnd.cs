@@ -16,7 +16,7 @@ namespace Interactions
         {
             base.AStart();
 
-            Background.singleton.gameObject.SetActive(false);
+            BackgroundManager.singleton.currentBackground.SetActive(false);
             DialogueBox.singleton.Show(true);
             DialogueBox.singleton.SetName("");
             DialogueTypeWriter.singleton.OutputText("游戏结束");

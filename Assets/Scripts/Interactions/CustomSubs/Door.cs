@@ -8,6 +8,7 @@ namespace Interactions.CustomSubs
     {
         //Setting
         public Scenario doorTo;
+        public AudioClip audioClip = null;
 
         public override void EnterScenario()
         {
@@ -23,6 +24,10 @@ namespace Interactions.CustomSubs
         {
             transform.parent.gameObject.SetActive(false);
             doorTo.gameObject.SetActive(true);
+            if (audioClip != null)
+            {
+                Modules.Sfx.singleton.PlayOneShot(audioClip);
+            }
         }
     }
 }

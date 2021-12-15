@@ -6,6 +6,8 @@ namespace Interactions.CustomSubs
 {
     public class Viewable : Base
     {
+        //Setting
+        public AudioClip audioClip = null;
         //cached
         GameObject viewThing;
         //runtime
@@ -31,6 +33,7 @@ namespace Interactions.CustomSubs
         IEnumerator View()
         {
             viewThing.SetActive(true);
+            Modules.Sfx.singleton.PlayOneShot(audioClip);
             yield return new WaitForSeconds(2);
             viewThing.SetActive(false);
             viewCoroutine = null;

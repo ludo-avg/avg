@@ -28,14 +28,14 @@ namespace Interactions
         float timeRemained;
         float timeRemainedToShow => Mathf.Clamp(timeRemained, 0f, timeLimitUpper - 0.5f);
 
-        public void DataInit(string text, float time, UnityEvent leftCall = null, UnityEvent rightCall = null, UnityEvent overTimeCall = null)
+        public void DataInit(string text, float time, UnityEvent leftCall = null, UnityEvent rightCall = null, AudioClip audioClip = null, UnityEvent overTimeCall = null)
         {
-            base.DataInit(text, leftCall, rightCall);
+            base.DataInit(text, leftCall, rightCall, audioClip);
             this.time = time;
             this.overTimeCall = overTimeCall;
         }
 
-        public override void DataInit(string text, UnityEvent leftCall = null, UnityEvent rightCall = null)
+        public override void DataInit(string text, UnityEvent leftCall = null, UnityEvent rightCall = null, AudioClip audioClip = null)
         {
             DataInit(text, 5f);
         }

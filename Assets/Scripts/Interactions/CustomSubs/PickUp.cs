@@ -52,6 +52,7 @@ namespace Interactions.CustomSubs
             SetActiveByPicked();
             Modules.Message.singleton.ShowMessage("获得 " + showName);
             Inventory.Inventory.singleton.AddItem(item);
+            Modules.Sfx.singleton.PlayPickUpSound();
 
             callBack.Invoke();
         }

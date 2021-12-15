@@ -35,6 +35,7 @@ namespace Interactions
 
         //setting
         public string text;
+        public AudioClip audioClip;
         public UnityEvent initCall = null;
         public UnityEvent leftCall = null;
         public UnityEvent rightCall = null;
@@ -44,11 +45,12 @@ namespace Interactions
         //runtime
         GameObject downHit;
 
-        public virtual void DataInit(string text, UnityEvent leftCall = null, UnityEvent rightCall = null)
+        public virtual void DataInit(string text, UnityEvent leftCall = null, UnityEvent rightCall = null, AudioClip audioClip = null)
         {
             this.text = text;
             this.leftCall = leftCall;
             this.rightCall = rightCall;
+            this.audioClip = audioClip;
         }
 
         public override void AStart()
@@ -78,6 +80,12 @@ namespace Interactions
             //4
             DialogueBox.singleton.Show(true);
             DialogueTypeWriter.singleton.OutputText(text);
+            Voice voice = Voice.singleton;
+            voice.StopVoice();
+            if (audioClip != null)
+            {
+                voice.PlayVoice(audioClip);
+            }
 
             //5
             if (initCall != null)
@@ -101,9 +109,10 @@ namespace Interactions
             #endregion
 
             base.AEnd();
-
             gameObject.SetActive(false);
-            
+            Voice voice = Voice.singleton;
+            voice.StopVoice();
+
             EndState endState = EndState.OutOfTime;
             {
                 bool leftDown = IsLeftDown();

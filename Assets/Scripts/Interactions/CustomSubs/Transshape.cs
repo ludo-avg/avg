@@ -25,6 +25,8 @@ namespace Interactions.CustomSubs
         #endregion
         //Setting
         public InfluenceVisible[] influenceVisibles;
+        public AudioClip shape0To1Audio;
+        public AudioClip shape1To0Audio;
 
         //persist
         GameObject shape0;
@@ -77,10 +79,12 @@ namespace Interactions.CustomSubs
             if (shapeState == Shape0Or1.Shape0)
             {
                 shapeState = Shape0Or1.Shape1;
+                if (shape0To1Audio != null) Modules.Sfx.singleton.PlayOneShot(shape0To1Audio);
             }
             else
             {
                 shapeState = Shape0Or1.Shape0;
+                if (shape1To0Audio != null) Modules.Sfx.singleton.PlayOneShot(shape1To0Audio);
             }
             SetVisibilityAndColliderByShape();
         }

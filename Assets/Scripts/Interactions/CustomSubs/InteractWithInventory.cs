@@ -20,6 +20,8 @@ namespace Interactions.CustomSubs
         public string right;
         public Inventory.Item item;
         public Base[] influenceSubs;
+        public AudioClip noItemAudio;
+        public AudioClip useItemAudio;
         //persist
         [NonSerialized] public PreOrAfter state;
 
@@ -49,24 +51,26 @@ namespace Interactions.CustomSubs
 
         public override void OnClick()
         {
-            var selectedItem = Inventory.Inventory.singleton.GetSelectedItem();
-            if (selectedItem == item)
+            bool hasItem = Inventory.Inventory.singleton.HasItem(item);
+            if (hasItem)
             {
-                AfterInteract();
+                Modules.ConfirmBox.singleton.Show("是否使用 " + item.name + "？", item, this);
             }
             else
             {
                 Modules.Message.singleton.ShowMessage(prompt);
+                if (noItemAudio != null) Modules.Sfx.singleton.PlayOneShot(noItemAudio);
             }
         }
 
-        private void AfterInteract()
+        public void AfterInteract()
         {
             state = PreOrAfter.After;
             gameObject.SetActive(false);
 
             Modules.Message.singleton.ShowMessage(right);
-            Inventory.Inventory.singleton.Use();
+            Inventory.Inventory.singleton.Use(item);
+            if (useItemAudio != null) Modules.Sfx.singleton.PlayOneShot(useItemAudio);
 
             foreach (var influenced in influenceSubs)
             {

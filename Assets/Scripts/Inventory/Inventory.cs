@@ -54,6 +54,8 @@ namespace Inventory
 
         public void Click(int index)
         {
+            return;
+
             int preSelectIndex = selectIndex;
 
             if (GetItem(index) != null)
@@ -93,6 +95,18 @@ namespace Inventory
             return null;
         }
 
+        public bool HasItem(Item item)
+        {
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                if (itemList[i] == item)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void Use()
         {
             Item item = itemList[selectIndex];
@@ -101,6 +115,25 @@ namespace Inventory
             if (item.durability == 0)
             {
                 RemoveItem(selectIndex);
+            }
+        }
+
+        public void Use(Item item)
+        {
+            
+            item.durability -= 1;
+            
+            if (item.durability == 0)
+            {
+                int index = -1;
+                for(int i = 0; i < itemList.Count; i++)
+                {
+                    if(itemList[i] == item)
+                    {
+                        index = i;
+                    }
+                }
+                if (index >= 0) RemoveItem(index);
             }
         }
 

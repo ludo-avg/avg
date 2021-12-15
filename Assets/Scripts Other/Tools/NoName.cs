@@ -11,7 +11,9 @@ namespace Tools
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
+            int layerMask = LayerMask.GetMask("Default");
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask:layerMask))
             {
                 if (hit.transform != null)
                 {
@@ -27,6 +29,36 @@ namespace Tools
         static public string GetMouseHitName()
         {
             GameObject obj = GetMouseHit();
+            if (obj != null)
+            {
+                return obj.name;
+            }
+            return null;
+        }
+
+        static public GameObject GetMouseHitOfUIInScene()
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            int layerMask = LayerMask.GetMask("UIInScene");
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask:layerMask))
+            {
+                if (hit.transform != null)
+                {
+                    GameObject hitObject = hit.transform.gameObject;
+                    return hitObject;
+                }
+                else
+                    return null;
+            }
+            return null;
+        }
+
+        static public string GetMouseHitNameOfUIInScene()
+        {
+            GameObject obj = GetMouseHitOfUIInScene();
             if (obj != null)
             {
                 return obj.name;
