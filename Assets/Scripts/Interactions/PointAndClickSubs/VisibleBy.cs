@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Interactions.CustomSubs
+namespace Interactions.PointAndClickSubs
 {
     public class VisibleBy : Base
     {

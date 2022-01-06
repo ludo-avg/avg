@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Interactions.CustomSubs
+namespace Interactions.PointAndClickSubs
 {
     public interface IInfluence
     {

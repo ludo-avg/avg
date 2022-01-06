@@ -20,7 +20,7 @@ namespace Modules
         GameObject box;
         TMP_Text textTMP;
         Inventory.Item item;
-        Interactions.CustomSubs.InteractWithInventory interact;
+        Interactions.PointAndClickSubs.InteractWithInventory interact;
 
         void Start()
         {
@@ -33,7 +33,7 @@ namespace Modules
 
         }
 
-        public void Show(string text, Inventory.Item item, Interactions.CustomSubs.InteractWithInventory interact)
+        public void Show(string text, Inventory.Item item, Interactions.PointAndClickSubs.InteractWithInventory interact)
         {
             textTMP.text = text;
             this.item = item;

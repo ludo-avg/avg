@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Tools.Extensions;
 
-namespace Interactions.CustomSubs
+namespace Interactions.PointAndClickSubs
 {
     public class Transshape : Base, IInfluence
     {

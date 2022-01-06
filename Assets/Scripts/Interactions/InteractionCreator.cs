@@ -9,6 +9,10 @@ namespace Interactions
     [ExecuteInEditMode]
     public class InteractionCreator : MonoBehaviour
     {
+        /*
+            现在，InteractionCreator和InteractionList一定不对应了。
+            最后一次，增加动画等效果，没有更新到这里。
+        */
         [SerializeField] private GameObject idle = null;
         [SerializeField] private GameObject gameEnd = null;
         [SerializeField] private GameObject dialogue = null;
@@ -193,12 +197,12 @@ namespace Interactions
             }
         }
 
-        public class CustomInteraction
+        public class PointAndClick
         {
             public static GameObject Create()
             {
                 GameObject obj = Instantiate(customInteraction_s);
-                Interactions.Custom result = obj.GetComponent<Interactions.Custom>();
+                Interactions.PointAndClick result = obj.GetComponent<Interactions.PointAndClick>();
                 result.DataInit();
 
                 obj.SetActive(false);

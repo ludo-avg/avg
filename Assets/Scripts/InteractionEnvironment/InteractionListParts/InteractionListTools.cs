@@ -127,12 +127,12 @@ public partial class InteractionList : MonoBehaviour
                 child.name = "TimeChoice" + num;
             }
 
-            if (child.GetComponent<Custom>() != null)
+            if (child.GetComponent<PointAndClick>() != null)
             {
                 int num = 0;
                 foreach (Transform c in transform)
                 {
-                    if (c.GetComponent<Custom>() != null)
+                    if (c.GetComponent<PointAndClick>() != null)
                     {
                         num++;
                     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class UserData : MonoBehaviour
 {
@@ -15,7 +16,13 @@ public class UserData : MonoBehaviour
     }
     #endregion
 
-    public int health = 3;
+    [ShowNativeProperty]
+    public int health {
+        get { return _health; }
+        set { lastHealthLoss = health - value; _health = value; }
+    }
+    private int _health = 3;
+    public int lastHealthLoss = 0;
 
     public int attack { get { return (chicken ? 3 : 0) + (knife ? 999 : 0); } }
     public int defence { get { return (cloth ? 1 : 0) + (dict ? 1 : 0); } }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Interactions.CustomSubs
+namespace Interactions.PointAndClickSubs
 {
     public class Scenario : MonoBehaviour
     {

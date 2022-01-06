@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Interactions.CustomSubs
+namespace Interactions.PointAndClickSubs
 {
     public class PickUp : Base
     {

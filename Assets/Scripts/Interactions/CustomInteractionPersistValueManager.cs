@@ -6,7 +6,7 @@ namespace Interactions
 {
     public class CustomInteractionPersistValueManager : MonoBehaviour
     {
-        public CustomSubs.Scenario[] senarios = null;
+        public PointAndClickSubs.Scenario[] senarios = null;
         
         void Start()
         {
@@ -15,7 +15,7 @@ namespace Interactions
                 Transform transform = senario.transform;
                 foreach (Transform t in transform)
                 {
-                    var customSub = t.GetComponent<CustomSubs.Base>();
+                    var customSub = t.GetComponent<PointAndClickSubs.Base>();
                     if (customSub != null)
                     {
                         customSub.DataInit();

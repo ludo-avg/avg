@@ -55,8 +55,9 @@ namespace Interactions
             }
             else
             {
-                SpriteRenderer sr = background.GetComponent<SpriteRenderer>();
-                if (sr != null)
+                //根据是否有子节点，判断是复杂还是简单
+                int childCount = background.transform.childCount;
+                if (childCount == 0)
                 {
                     type = Type.Simple;
                 }
@@ -65,7 +66,6 @@ namespace Interactions
                     type = Type.Complex;
                 }
             }
-
             this.instantChange = instantChange;
         }
 

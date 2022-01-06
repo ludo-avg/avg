@@ -41,7 +41,7 @@ public partial class InteractionList : MonoBehaviour
     [SerializeField] GameObject characterAWenFather = null;
     [SerializeField] TimeChoice timeChoice = null;
     [SerializeField] Choice choice = null;
-    [SerializeField] Custom custom = null;
+    [SerializeField] PointAndClick custom = null;
 
 #if UNITY_EDITOR
     [Button("DeleteAllChildren")]

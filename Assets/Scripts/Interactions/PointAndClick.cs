@@ -8,10 +8,10 @@ using Tools.Extensions;
 
 namespace Interactions
 {
-    public class Custom : InteractionBase
+    public class PointAndClick : InteractionBase
     {
         //setting
-        public CustomSubs.Scenario senario;
+        public PointAndClickSubs.Scenario senario;
         public bool timeRestricted;
         public float time;
         public bool canManuallyLeave;
@@ -101,7 +101,7 @@ namespace Interactions
             
             foreach (Transform t in InteractionData.singleton.transform)
             {
-                CustomSubs.Scenario s = t.GetComponent<CustomSubs.Scenario>();
+                PointAndClickSubs.Scenario s = t.GetComponent<PointAndClickSubs.Scenario>();
                 if (s != null) s.gameObject.SetActive(false);
 
             }
@@ -181,7 +181,7 @@ namespace Interactions
                     var upHit = Tools.NoName.GetMouseHit();
                     if (upHit != null && upHit == downHit)
                     {
-                        CustomSubs.Base b = upHit.GetComponent<CustomSubs.Base>();
+                        PointAndClickSubs.Base b = upHit.GetComponent<PointAndClickSubs.Base>();
                         b.OnClick();
                     }
                 }

@@ -56,6 +56,7 @@ namespace Inventory
         {
             return;
 
+            #pragma warning disable 162
             int preSelectIndex = selectIndex;
 
             if (GetItem(index) != null)
@@ -82,7 +83,8 @@ namespace Inventory
                     ScrollViewManager.singleton.SetGlow(selectIndex, true);
                 }
             }
-            
+            #pragma warning restore 162
+
         }
 
 

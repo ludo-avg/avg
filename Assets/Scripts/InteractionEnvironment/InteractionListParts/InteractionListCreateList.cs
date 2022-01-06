@@ -252,7 +252,7 @@ public partial class InteractionList : MonoBehaviour
             PutLastAndRename(InteractionCreator.Dialogue.Create("（我得为即将到来的暴风骤雨做好准备，我得赶快找点东西保护好自己。）"));
 
             //Choice
-            var cus = InteractionCreator.CustomInteraction.Copy(custom.gameObject);
+            var cus = InteractionCreator.PointAndClick.Copy(custom.gameObject);
             cus.name = "Custom";
             PutLast(cus);
 
