@@ -13,16 +13,22 @@ public class LaoMuGunMove : MonoBehaviour
 
     //Cached
     float startTime = 0f;
-    void Start()
+    bool move = false;
+    void OnEnable()
     {
         transform.position = startPositon;
-        startTime = Time.time;
+        startTime = 0;
+        move = false;
     }
 
     void Update()
     {
-        float passedTime = Time.time - startTime;
+        if(!move)
+        {
+            return;
+        }
 
+        float passedTime = Time.time - startTime;
 
         if (passedTime >= moveTime)
         {
@@ -39,5 +45,11 @@ public class LaoMuGunMove : MonoBehaviour
             y = Mathf.Sin(timeAngle) * moveMaxY;
         }
         transform.position = startPositon + new Vector3(x, y, 0);
+    }
+
+    public void Move()
+    {
+        startTime = Time.time;
+        move = true;
     }
 }

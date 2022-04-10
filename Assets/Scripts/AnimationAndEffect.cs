@@ -6,6 +6,8 @@ public class AnimationAndEffect : MonoBehaviour
 {
     public TeacherMove teacherMove;
     public ChalkAnimation chalkAnimation;
+    public LaoMuGunMove laoMuGunMove;
+    public LaoMuGunMoveRentFatherCorner laoMuGunMoveRentFatherCorner;
     public void TeacherThrowChalk()
     {
         teacherMove.ThrowChalk();
@@ -15,5 +17,15 @@ public class AnimationAndEffect : MonoBehaviour
     public void StopChalk()
     {
         chalkAnimation.StopChalk();
+    }
+
+    public void LaoMuGunMove()
+    {
+        laoMuGunMove.Move();
+    }
+
+    public void LaoMuGunRentFatherCornerMoveAway()
+    {
+        laoMuGunMoveRentFatherCorner.MoveAway();
     }
 }

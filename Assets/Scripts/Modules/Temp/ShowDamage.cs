@@ -16,7 +16,7 @@ namespace Modules.Temp
         //Setting
         private Vector3 startPosition = new Vector3(0, -0.5f, 0);
         private Vector3 endPosition = new Vector3(0, 2.5f, 0);
-        private float startScale = 2f;
+        private float startScale = 1.5f;
         private float endScale = 0.1f;
         private float startAlpha = 1f;
         private float endAlpha = 0.2f;
@@ -65,25 +65,29 @@ namespace Modules.Temp
                 value => parentNode.transform.position = value,
                 endPosition,
                 time
-                );
+                )
+                .SetEase(Ease.InSine);
             Tween scaleTween = DOTween.To(
                 () => startScale,
                 value => parentNode.transform.localScale = new Vector3(value, value, 1),
                 endScale,
                 time
-                );
+                )
+                .SetEase(Ease.InCubic);
             Tween colorTweenHeart = DOTween.To(
                 () => startColor,
                 value => heart.color = value,
                 endColor,
                 time
-                );
+                )
+                .SetEase(Ease.InCubic);
             Tween colorTweenText = DOTween.To(
                 () => startColor,
                 value => text.color = value,
                 endColor,
                 time
-                );
+                )
+                .SetEase(Ease.InCubic);
 
             Sequence mySequence = DOTween.Sequence();
             mySequence.Append(positionTween);

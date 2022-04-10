@@ -94,7 +94,6 @@ public class UserData : MonoBehaviour
     public void RentChooseLeft()
     {
         rentLeftChosen = true;
-        health -= 1;
     }
     public void RentChooseRight()
     {
@@ -134,7 +133,63 @@ public class UserData : MonoBehaviour
 
     #endregion
 
+
+    #region InteractionX - Choice，ReturnToRent or Restart
+
+    public bool jailLeftChosen = false;
+
+    public void JailInit()
+    {
+        jailLeftChosen = false;
+    }
+    public void JailChooseLeft()
+    {
+        jailLeftChosen = true;
+    }
+    public void JailChooseRight()
+    {
+
+    }
+
+
+    public bool Condition_IsJailLeftChosen_R;
+    public void Condition_IsJailLeftChosen()
+    {
+        bool returnValue = jailLeftChosen;
+
+        {
+            string methodName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string returnName = methodName + "_R";
+            Type myType = GetType();
+            FieldInfo myFieldInfo = myType.GetField(returnName,
+                BindingFlags.Public | BindingFlags.Instance);
+            myFieldInfo.SetValue(this, returnValue);
+        }
+    }
+
+    public bool Condition_IsJailRightChosen_R;
+    public void Condition_IsJailRightChosen()
+    {
+        bool returnValue = !jailLeftChosen;
+
+        {
+            string methodName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            string returnName = methodName + "_R";
+            Type myType = GetType();
+            FieldInfo myFieldInfo = myType.GetField(returnName,
+                BindingFlags.Public | BindingFlags.Instance);
+            myFieldInfo.SetValue(this, returnValue);
+        }
+    }
+
+    #endregion
+
     #region Function
+
+    public void DamageOne()
+    {
+        health -= 1;
+    }
 
     public void Beat()
     {
@@ -206,8 +261,8 @@ public class UserData : MonoBehaviour
         }
     }
 
-    public bool Condition_IsNotHealth_R;
-    public void Condition_IsNotHealth()
+    public bool Condition_IsNotHealthy_R;
+    public void Condition_IsNotHealthy()
     {
         bool returnValue = health <= 0;
 

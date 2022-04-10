@@ -14,7 +14,7 @@ public class AWenMoveRentFatherCorner : MonoBehaviour
 
     //Cached
     float startTime = 0f;
-    void Start()
+    void OnEnable()
     {
         transform.position = startPositon;
         startTime = Time.time;

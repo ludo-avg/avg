@@ -16,18 +16,60 @@ public class ChalkAnimation : MonoBehaviour
     GameObject chalkRight;
     Tween tween = null;
     Coroutine coroutine = null;
-    void Start()
+
+    private void Awake()
     {
         chalkMiddle = transform.LudoFind("ChalkMiddle").gameObject;
         chalkLeft = transform.LudoFind("ChalkLeft").gameObject;
         chalkRight = transform.LudoFind("ChalkRight").gameObject;
+    }
+    void OnEnable()
+    {
         chalkMiddle.SetActive(false);
         chalkLeft.SetActive(false);
         chalkRight.SetActive(false);
     }
 
+    void OnDisable()
+    {
+        if (tween != null)
+        {
+            tween.Kill();
+            tween = null;
+        }
+
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+    }
+
     public void ThrowChalk()
     {
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
+        IEnumerator ChalkFlashCoroutine()
+        {
+            chalkLeft.SetActive(true);
+            chalkRight.SetActive(false);
+
+            while (true)
+            {
+                yield return 0.05f;
+                chalkLeft.SetActive(!chalkLeft.activeSelf);
+                chalkRight.SetActive(!chalkRight.activeSelf);
+            }
+        }
+        void StartChalkFlash()
+        {
+            tween = null;
+            chalkMiddle.SetActive(false);
+            coroutine = StartCoroutine(ChalkFlashCoroutine());
+        }
+
         chalkMiddle.SetActive(true);
         tween = DOTween.To(
             () => chalkMiddleStartPosition,
@@ -38,28 +80,13 @@ public class ChalkAnimation : MonoBehaviour
             OnComplete(StartChalkFlash);
     }
 
-    void StartChalkFlash()
-    {
-        tween = null;
-        chalkMiddle.SetActive(false);
-        coroutine = StartCoroutine(ChalkFlashCoroutine());
-    }
-
-    IEnumerator ChalkFlashCoroutine( )
-    {
-        chalkLeft.SetActive(true);
-        chalkRight.SetActive(false);
-
-        while (true)
-        {
-            yield return 0.05f;
-            chalkLeft.SetActive(!chalkLeft.activeSelf);
-            chalkRight.SetActive(!chalkRight.activeSelf);
-        }
-    }
-
     public void StopChalk()
     {
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         if (tween != null)
         {
             tween.Kill();

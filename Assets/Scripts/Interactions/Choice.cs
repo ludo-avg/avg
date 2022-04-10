@@ -39,6 +39,7 @@ namespace Interactions
         public UnityEvent initCall = null;
         public UnityEvent leftCall = null;
         public UnityEvent rightCall = null;
+        public bool notShowDialogueBox = false; //新增加的，没有处理DataInit
 
         //cached
         protected Dictionary<LR, Button> buttons;
@@ -79,6 +80,10 @@ namespace Interactions
 
             //4
             DialogueBox.singleton.Show(true);
+            if (notShowDialogueBox)
+            {
+                DialogueBox.singleton.Show(false);
+            }
             DialogueTypeWriter.singleton.OutputText(text);
             Voice voice = Voice.singleton;
             voice.StopVoice();

@@ -189,4 +189,11 @@ public class InteractionManager : MonoBehaviour
             return nextFound;   
         }
     }
+
+    public void GotoNode(InteractionBase node)
+    {
+        int count = node.transform.GetSiblingIndex();
+        current = list[count];
+        current.AStart();
+    }
 }

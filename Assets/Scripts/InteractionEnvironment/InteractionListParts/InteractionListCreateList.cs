@@ -363,7 +363,7 @@ public partial class InteractionList : MonoBehaviour
                     b52Goto[i] = new InteractionBase.ConditionalGoto();
                 }
                 b52Goto[0].condition = new UnityEvent();
-                UnityEventTools.AddPersistentListener(b52Goto[0].condition, userData.Condition_IsNotHealth);
+                UnityEventTools.AddPersistentListener(b52Goto[0].condition, userData.Condition_IsNotHealthy);
                 b52Goto[0].interaction = b521.GetComponent<InteractionBase>();
                 b52Goto[1].condition = null;
                 b52Goto[1].interaction = b522.GetComponent<InteractionBase>();

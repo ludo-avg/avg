@@ -53,6 +53,7 @@ namespace Interactions.PointAndClickSubs
             Modules.Message.singleton.ShowMessage("获得 " + showName);
             Inventory.Inventory.singleton.AddItem(item);
             Modules.Sfx.singleton.PlayPickUpSound();
+            Modules.Temp.AWenSay.singleton.Say(item.acquireText, item.auquireAudio);
 
             callBack.Invoke();
         }

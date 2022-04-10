@@ -113,6 +113,7 @@ namespace Interactions
             {
                 BackgroundManager.singleton.currentBackground.SetActive(true);
             }
+            Modules.Temp.AWenSay.singleton.StopSaying();
             Inventory.ScrollViewManager.singleton.transform.parent.parent.gameObject.SetActive(false);
 
             timeObject.SetActive(false);
@@ -158,7 +159,6 @@ namespace Interactions
             }
             if(currentHitUIInScene != null)
             {
-                //print($"CurrentHitUIInScene: {currentHitUIInScene.name}");
                 return;
             }
             

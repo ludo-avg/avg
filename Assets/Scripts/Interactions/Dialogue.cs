@@ -26,6 +26,7 @@ namespace Interactions
         public string text;
         public string characterName;
         public AudioClip audioClip;
+        public bool autoEnd = false; //这个，是新加的，还没被DataInit处理。
 
         //runtime
         State state;
@@ -165,6 +166,23 @@ namespace Interactions
             }
         }
 
+        public override void AUpdate()
+        {
+            if (!autoEnd)
+            {
+                return;
+            }
+
+            if (writer.state == DialogueTypeWriter.TypewriterState.Completed)
+            {
+                if (Voice.singleton.GetState() == Voice.State.Stopped)
+                {
+                    state = State.End;
+                    AEnd();
+                }
+            }
+
+        }
 
         public string GetInfo()
         {
