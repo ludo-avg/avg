@@ -39,10 +39,9 @@ namespace Tools
         static public GameObject GetMouseHitOfUIInScene()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
             int layerMask = LayerMask.GetMask("UIInScene");
 
+            RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask:layerMask))
             {
                 if (hit.transform != null)
